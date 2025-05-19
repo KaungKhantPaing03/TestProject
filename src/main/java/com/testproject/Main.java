@@ -5,12 +5,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Main {
+
+    private String ip = "localhost";
+    private String port = "3306";
+    private String dbname = "testdb";
+    private String username = "root";
+    private String password = "";
     //1. Connection
-    private Connection db_connect() {
+    protected Connection db_connect() {
+
         Connection con = null;
         try {
             Thread.sleep(30000);
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver"); //Check for driver exists or not
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -21,7 +28,7 @@ public class Main {
         while(true) {
             try {
                 Thread.sleep(5000);
-                con = DriverManager.getConnection("jdbc:mysql://db:3306/testdb?useSSL=false&allowPublicKeyRetrieval=true", "root", "root");
+                con = DriverManager.getConnection("jdbc:mysql://"+ip+":"+port+"/"+dbname, username, password);
                 System.out.println("Successful connected.");
                 break;
             }
@@ -40,7 +47,9 @@ public class Main {
         Database_Read dr  = new Database_Read(con);
         dr.read();
         try{
-            con.close();
+            if(con != null) {
+                con.close();
+            }
         }
         catch (Exception ex){
             ex.printStackTrace();
