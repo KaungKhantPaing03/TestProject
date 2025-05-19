@@ -6,31 +6,37 @@ import java.sql.SQLException;
 
 public class Main {
     //1. Connection
-    private Connection get_Db_Connection(){
+    private Connection db_connect() {
         Connection con = null;
-        String dataBaseUrl = "jdbc:mysql://localhost:3306/testdb";
-        String username = "root";
-        String password = "";
-        try{
-            Class.forName("com.mysql.cj.jdbc.Driver"); //Checking Connector Driver
-            con  = DriverManager.getConnection(dataBaseUrl,username,password);
-            System.out.println("Database is connected");
+        try {
+            Thread.sleep(30000);
+            Class.forName("com.mysql.cj.jdbc.Driver");
         }
-        catch (ClassNotFoundException cne){
-            System.out.println(cne.getMessage());
+        catch (Exception ex) {
+            ex.printStackTrace();
         }
-        catch (SQLException se) {
-            se.printStackTrace();
-        }
-         catch (Exception e) {
-            e.printStackTrace();
-        }
-        return con;
 
+        int attempt = 1;
+
+        while(true) {
+            try {
+                Thread.sleep(5000);
+                con = DriverManager.getConnection("jdbc:mysql://db:3306/testdb?useSSL=false&allowPublicKeyRetrieval=true", "root", "root");
+                System.out.println("Successful connected.");
+                break;
+            }
+            catch (Exception e) {
+                System.out.println(e.getMessage());
+                System.out.println("Fail to connect, attempt = " + attempt);
+                attempt++;
+            }
+        }
+
+        return con;
     }
     public static void main(String[] args) {
         Main m = new Main();
-        Connection con = m.get_Db_Connection();
+        Connection con = m.db_connect();
         Database_Read dr  = new Database_Read(con);
         dr.read();
         try{
